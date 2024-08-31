@@ -1,4 +1,12 @@
 <?php
+
+$lockFile = 'script.lock';
+$fp = fopen($lockFile, 'w+');
+
+if (!flock($fp, LOCK_EX | LOCK_NB)) {
+    exit;
+}
+
 include 'other/db_connection.php';
 require 'other/SMTP/Exception.php';
 require 'other/SMTP/PHPMailer.php';
