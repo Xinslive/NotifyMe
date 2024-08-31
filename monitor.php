@@ -7,35 +7,39 @@ require 'other/SMTP/SMTP.php';
 function sendEmail($subject, $message) {
     $mail = new PHPMailer\PHPMailer\PHPMailer();
     $mail->isSMTP();
-    $mail->Host = 'SMTP服务器地址';
+    $mail->Host = 'smtp.qq.com';
     $mail->SMTPAuth = true;
-    $mail->Username = 'SMTP账号';
-    $mail->Password = 'SMTP密码';
+    $mail->Username = 'yeuers@foxmail.com';
+    $mail->Password = 'smtp密码';
     $mail->SMTPSecure = 'ssl';
-    $mail->Port = SMTP端口;
-    $mail->setFrom('邮箱账号', '昵称');
+    $mail->Port = 465;
+    $mail->setFrom('yeuers@foxmail.com', '浮生纪幸');
+    $mail->isHTML(true);
+    $mail->Subject = $subject;
+    $mail->CharSet = 'UTF-8';
+    $mail->Body = $message;
+
     $recipients = file('other/mail.txt', FILE_IGNORE_NEW_LINES);
-    $batchSize = 20;//一个批次的邮件数量
+    $batchSize = 20;
     $totalRecipients = count($recipients);
+    
     for ($i = 0; $i < $totalRecipients; $i += $batchSize) {
         $batchRecipients = array_slice($recipients, $i, $batchSize);
         foreach ($batchRecipients as $recipient) {
             $mail->addAddress($recipient);
         }
-        $mail->isHTML(true);
-        $mail->Subject = $subject;
-        $mail->CharSet = 'UTF-8';
-        $mail->Body = $message;
 
         if ($mail->send()) {
             echo "批次 " . ($i / $batchSize + 1) . " 邮件已发送！";
         } else {
             logError("批次 " . ($i / $batchSize + 1) . " 邮件发送失败：" . $mail->ErrorInfo);
         }
+
         $mail->clearAddresses();
         sleep(4);
     }
 }
+
 
 $tasks = getActiveTasks();
 
@@ -64,7 +68,11 @@ function getActiveTasks() {
     global $mysqli;
     $tasks = [];
 
-    $result = $mysqli->query("SELECT id, url, content_keywords, frequency, last_run_time FROM tasks WHERE status = '0'");
+    $stmt = $mysqli->prepare("SELECT id, url, content_keywords, frequency, last_run_time FROM tasks WHERE status = ?");
+    $status = '0';
+    $stmt->bind_param("s", $status);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
     if ($result) {
         while ($row = $result->fetch_assoc()) {
@@ -75,8 +83,10 @@ function getActiveTasks() {
         logError("无法获取任务: " . $mysqli->error);
     }
 
+    $stmt->close();
     return $tasks;
 }
+
 
 function checkUrl($url, $keywords) {
     $curl = curl_init($url);
@@ -89,8 +99,9 @@ function checkUrl($url, $keywords) {
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($curl, CURLOPT_HEADER, false);
     curl_setopt($curl, CURLOPT_NOBODY, false);
-    curl_setopt($curl, CURLOPT_FRESH_CONNECT, true);
-    curl_setopt($curl, CURLOPT_FORBID_REUSE, true);
+    curl_setopt($curl, CURLOPT_FRESH_CONNECT, false);  // 允许重用连接
+    curl_setopt($curl, CURLOPT_FORBID_REUSE, false);   // 禁止禁止重用连接
+    curl_setopt($curl, CURLOPT_TCP_NODELAY, true);     // 减少网络延迟
     curl_setopt($curl, CURLOPT_HTTPHEADER, array('Cache-Control: no-cache', 'Pragma: no-cache'));
     curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
@@ -125,6 +136,7 @@ function checkUrl($url, $keywords) {
 
     return ['notify' => false, 'message' => "未找到包含所有关键词的链接"];
 }
+
 
 function checkKeywordsInLinks($html, $keywords, $baseUrl) {
     $dom = new DOMDocument();
@@ -165,7 +177,6 @@ function extractBaseUri($html) {
     if ($base && $base->hasAttribute('href')) {
         $baseUri = $base->getAttribute('href');
     } else {
-        // 提取网页的基础 URL
         $urlParts = parse_url($url);
         $baseUri = isset($urlParts['scheme']) ? $urlParts['scheme'] . '://' . $urlParts['host'] : '';
     }
