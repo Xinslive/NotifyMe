@@ -9,3 +9,6 @@
 访问URL-GET[ https://your.domain.com/monitor.php ]
 
 频率10秒到60秒之间，自己看着来
+
+![225003202](https://i1.wp.com/minipix.pro/uploads/2024/08/31/225003202.webp)
+![775672560](https://i1.wp.com/minipix.pro/uploads/2024/08/31/775672560.webp)
