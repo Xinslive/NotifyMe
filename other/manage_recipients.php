@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
         $message = "请填写你的邮箱";
     }
-    header('Location: index.html?message=' . urlencode($message));
+    header('Location: ../index.html?message=' . urlencode($message));
     exit;
 }
 ?>
