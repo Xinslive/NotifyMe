@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>订阅通知</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            color: #333;
+            line-height: 1.8;
+            margin: 0;
+            padding: 28px 14px;
+            background-color: #f4f4f9;
+            background-position-x: center;
+            background-position-y: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+        }
+        h1 {
+            text-align: center;
+            font-size: 32px;
+            margin-bottom: 14px;
+            word-wrap: break-word;
+        }
+        form {
+            background: #fff;
+            padding: 28px;
+            margin-bottom: 28px;
+            border-radius: 14px;
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            box-sizing: border-box;
+        }
+        label {
+            display: block;
+            font-size: 20px;
+            margin-bottom: 14px;
+        }
+        .important-label {
+            font-size: 24px;
+            text-align: center;
+        }
+        input[type="email"] {
+            width: 100%;
+            padding: 16px;
+            margin-bottom: 28px;
+            border: 2px solid #ddd;
+            border-radius: 14px;
+            box-sizing: border-box;
+            font-size: 20px;
+        }
+        button {
+            background-color: #5cb85c;
+            color: white;
+            padding: 20px;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            display: block;
+            width: 100%;
+            font-size: 20px;
+        }
+        button:hover {
+            background-color: #4cae4c;
+        }
+        .button-link {
+            display: inline-block;
+            background-color: #4da6ff;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 14px;
+            cursor: pointer;
+            font-size: 20px;
+            transition: background-color 0.3s ease;
+            margin-bottom: 10px;
+            text-align: center;
+            width: calc(50% - 10px);
+            box-sizing: border-box;
+        }
+        .button-link:hover {
+            background-color: #2980b9;
+        }
+        .link-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 18px;
+        }
+        .tutorial-form {
+            background: #fff;
+            padding: 25px;
+            border-radius: 14px;
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            box-sizing: border-box;
+            margin-top: 25px;
+        }
+        .tutorial-form h1 {
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 14px;
+        }
+        .tutorial-form label {
+            font-size: 18px;
+            margin-bottom: 13px;
+            text-align: left;
+            display: block;
+        }
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 24px;
+            }
+            form, .tutorial-form {
+                padding: 20px;
+            }
+            label, .important-label {
+                font-size: 18px;
+            }
+            input[type="email"] {
+                font-size: 18px;
+                padding: 14px;
+            }
+            button, .button-link {
+                font-size: 18px;
+                padding: 14px;
+            }
+        }
+    </style>
+    <script>
+        window.onload = function() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.has('message')) {
+                alert(params.get('message'));
+            }
+        }
+    </script>
+</head>
+<body>
+    <form action="other/manage_recipients.php" method="post" onsubmit="return validateForm()">
+        <h1>登记邮箱账号</h1>
+        <label for="new_email" class="important-label">通知邮件由 <b>XXXXXXXXX</b> 发出<br>把它添加到邮箱白名单，防止收不到提醒</label>
+        <input type="email" id="new_email" name="new_email" placeholder="请输入你的邮箱地址">
+        <button type="submit" name="action" value="add">→ 订阅通知 ←</button>
+    </form>
+    <div class="tutorial-form">
+        <h1>↓ 添加白名单教程 ↓</h1>
+        <label class="important-label">将一个邮件地址添加到白名单后，该地址发来的邮件将不受反垃圾规则的影响，保证您一定能收到该地址的邮件。</label>
+        <div class="link-container">
+            <a href="https://service.mail.qq.com/detail/0/473" class="button-link" target="_blank">QQ邮箱</a>
+            <a href="https://mail.163.com/mailhelp/antispam.htm#whitelist" class="button-link" target="_blank">163邮箱</a>
+            <a href="https://support.microsoft.com/zh-cn/topic/%E9%98%BB%E6%AD%A2%E6%88%96%E5%85%81%E8%AE%B8-%E5%9E%83%E5%9C%BE%E9%82%AE%E4%BB%B6%E8%AE%BE%E7%BD%AE-48c9f6f7-2309-4f95-9a4d-de987e880e46#bkmk_web-safe-senders" class="button-link" target="_blank">Outlook邮箱</a>
+            <a href="https://mailpanda.com/documentation-detail/9ae02e6b-65b0-3492-4415-a72c694322a4" class="button-link" target="_blank">其他邮箱</a>
+        </div>
+    </div>
+</body>
+</html>
