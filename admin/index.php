@@ -79,7 +79,7 @@
 
         th, td {
             padding: 12px;
-            text-align: left;
+            text-align: center;
             border-bottom: 1px solid #ddd;
             min-width: 150px;
             word-wrap: break-word;
@@ -93,6 +93,10 @@
 
         td {
             white-space: normal;
+        }
+
+        .left-align {
+            text-align: left;
         }
 
         tr:nth-child(even) {
@@ -180,10 +184,10 @@
         <form action="add_task.php" method="POST" onsubmit="convertFrequency()">
             <input type="hidden" name="id" id="id" value="">
             <input type="hidden" name="frequency_sec" id="frequency_sec" value="">
-            <label for="url">目标网站</label>
+            <label for="url">URL</label>
             <input type="text" name="url" id="url" required>
 
-            <label for="content_keywords">监控内容 (空格分隔)</label>
+            <label for="content_keywords">关键词 (空格分隔)</label>
             <input type="text" name="content_keywords" id="content_keywords" required>
 
             <label for="frequency">监控频率（分钟）</label>
@@ -195,8 +199,8 @@
         <div class="table-wrapper">
             <table>
                 <tr>
-                    <th style="width: 40%;">目标网站</th>
-                    <th style="width: 20%;">监控内容</th>
+                    <th class="left-align" style="width: 40%;">URL</th>
+                    <th style="width: 20%;">关键词</th>
                     <th style="width: 8%;">频率</th>
                     <th style="width: 8%;">状态</th>
                     <th style="width: 12%;">操作选项</th>
@@ -206,10 +210,10 @@
                 $result = $mysqli->query("SELECT * FROM tasks");
                 while ($row = $result->fetch_assoc()) {
                     echo "<tr>";
-                    echo "<td>" . $row['url'] . "</td>";
+                    echo "<td class='left-align'>" . $row['url'] . "</td>";
                     echo "<td>" . $row['content_keywords'] . "</td>";
                     echo "<td>" . ($row['frequency'] / 60) . "</td>";
-                    echo "<td class='status'>" . ($row['status'] == 0 ? '监控中' : '完成') . "</td>";
+                    echo "<td class='status'>" . ($row['status'] == 0 ? '监控中' : '已完成') . "</td>";
                     echo "<td>";
                     echo "<a href='#' onclick='populateForm(" . json_encode($row) . ");' style='color: #007bff;'>编辑</a>";
                     echo "  ";
