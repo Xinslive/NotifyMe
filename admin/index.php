@@ -66,10 +66,14 @@
             background-color: #218838;
         }
 
+        .table-wrapper {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
             table-layout: fixed;
         }
 
@@ -77,6 +81,7 @@
             padding: 12px;
             text-align: left;
             border-bottom: 1px solid #ddd;
+            min-width: 150px;
             word-wrap: break-word;
         }
 
@@ -84,6 +89,10 @@
             background-color: #f8f9fa;
             color: #333;
             font-weight: bold;
+        }
+
+        td {
+            white-space: normal;
         }
 
         tr:nth-child(even) {
@@ -145,6 +154,23 @@
                 document.getElementById('submit-button').value = '更新任务';
             }
         }
+
+        function confirmDelete(url) {
+            if (confirm("确定删除此任务吗？")) {
+                window.location.href = url;
+            }
+        }
+
+        function formatKeywords() {
+            const cells = document.querySelectorAll('td:nth-child(2)');
+            cells.forEach(cell => {
+                cell.innerHTML = cell.textContent.replace(/ /g, '<br>');
+            });
+        }
+
+        window.onload = function() {
+            formatKeywords();
+        }
     </script>
 </head>
 <body>
@@ -154,10 +180,10 @@
         <form action="add_task.php" method="POST" onsubmit="convertFrequency()">
             <input type="hidden" name="id" id="id" value="">
             <input type="hidden" name="frequency_sec" id="frequency_sec" value="">
-            <label for="url">URL</label>
+            <label for="url">目标网站</label>
             <input type="text" name="url" id="url" required>
 
-            <label for="content_keywords">关键词 (空格分隔)</label>
+            <label for="content_keywords">监控内容 (空格分隔)</label>
             <input type="text" name="content_keywords" id="content_keywords" required>
 
             <label for="frequency">监控频率（分钟）</label>
@@ -166,33 +192,35 @@
             <input type="submit" id="submit-button" value="保存任务">
         </form>
 
-        <table>
-            <tr>
-                <th>URL</th>
-                <th>关键词</th>
-                <th>频率</th>
-                <th>状态</th>
-                <th>操作选项</th>
-            </tr>
-            <?php
-            include '../other/db_connection.php';
-            $result = $mysqli->query("SELECT * FROM tasks");
-            while ($row = $result->fetch_assoc()) {
-                echo "<tr>";
-                echo "<td>" . $row['url'] . "</td>";
-                echo "<td>" . $row['content_keywords'] . "</td>";
-                echo "<td>" . ($row['frequency'] / 60) . "</td>";
-                echo "<td class='status'>" . ($row['status'] == 0 ? '监控中' : '已完成') . "</td>";
-                echo "<td>";
-                echo "<a href='#' onclick='populateForm(" . json_encode($row) . ");' style='color: #007bff;'>编辑</a>";
-                echo " | ";
-                echo "<a href='delete_task.php?id=" . $row['id'] . "' style='color: #dc3545;'>删除</a>";
-                echo "</td>";
-                echo "</tr>";
-            }
-            $mysqli->close();
-            ?>
-        </table>
+        <div class="table-wrapper">
+            <table>
+                <tr>
+                    <th style="width: 40%;">目标网站</th>
+                    <th style="width: 20%;">监控内容</th>
+                    <th style="width: 8%;">频率</th>
+                    <th style="width: 8%;">状态</th>
+                    <th style="width: 12%;">操作选项</th>
+                </tr>
+                <?php
+                include '../other/db_connection.php';
+                $result = $mysqli->query("SELECT * FROM tasks");
+                while ($row = $result->fetch_assoc()) {
+                    echo "<tr>";
+                    echo "<td>" . $row['url'] . "</td>";
+                    echo "<td>" . $row['content_keywords'] . "</td>";
+                    echo "<td>" . ($row['frequency'] / 60) . "</td>";
+                    echo "<td class='status'>" . ($row['status'] == 0 ? '监控中' : '完成') . "</td>";
+                    echo "<td>";
+                    echo "<a href='#' onclick='populateForm(" . json_encode($row) . ");' style='color: #007bff;'>编辑</a>";
+                    echo "  ";
+                    echo "<a href='#' onclick='confirmDelete(\"delete_task.php?id=" . $row['id'] . "\")' style='color: #dc3545;'>删除</a>";
+                    echo "</td>";
+                    echo "</tr>";
+                }
+                $mysqli->close();
+                ?>
+            </table>
+        </div>
     </div>
 </body>
 </html>
