@@ -2,8 +2,132 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>监控任务设置</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #444;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #218838;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            table-layout: fixed;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            word-wrap: break-word;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            color: #333;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #e9ecef;
+        }
+
+        .status {
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        .status.completed {
+            color: #dc3545;
+        }
+
+        a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+
+            table, th, td {
+                font-size: 14px;
+                padding: 8px;
+            }
+
+            input[type="submit"] {
+                font-size: 14px;
+            }
+        }
+    </style>
     <script>
         function convertFrequency() {
             var frequencyMin = document.getElementById('frequency').value;
@@ -57,7 +181,7 @@
                 echo "<tr>";
                 echo "<td>" . $row['url'] . "</td>";
                 echo "<td>" . $row['content_keywords'] . "</td>";
-                echo "<td>" . ($row['frequency'] / 60) . "</td>";  // 显示为分钟
+                echo "<td>" . ($row['frequency'] / 60) . "</td>";
                 echo "<td class='status'>" . ($row['status'] == 0 ? '监控中' : '已完成') . "</td>";
                 echo "<td>";
                 echo "<a href='#' onclick='populateForm(" . json_encode($row) . ");' style='color: #007bff;'>编辑</a>";
