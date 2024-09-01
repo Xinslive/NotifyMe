@@ -184,7 +184,7 @@
         <form action="add_task.php" method="POST" onsubmit="convertFrequency()">
             <input type="hidden" name="id" id="id" value="">
             <input type="hidden" name="frequency_sec" id="frequency_sec" value="">
-            <label for="url">URL</label>
+            <label for="url">目标页面</label>
             <input type="text" name="url" id="url" required>
 
             <label for="content_keywords">关键词 (空格分隔)</label>
@@ -199,7 +199,7 @@
         <div class="table-wrapper">
             <table>
                 <tr>
-                    <th class="left-align" style="width: 40%;">URL</th>
+                    <th class="left-align" style="width: 40%;">目标页面</th>
                     <th style="width: 20%;">关键词</th>
                     <th style="width: 8%;">频率</th>
                     <th style="width: 8%;">状态</th>
