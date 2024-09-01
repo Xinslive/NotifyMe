@@ -210,19 +210,24 @@ function resolveUrl($href, $baseUri) {
         return $baseScheme . '://' . $baseHost . $href;
     }
 
-    $pathParts = array_filter(explode('/', $basePath));
-    $hrefParts = array_filter(explode('/', $href));
+    if (preg_match('/^\.\//', $href)) {
+        $href = substr($href, 2);
+        return $baseScheme . '://' . $baseHost . '/' . trim($basePath, '/') . '/' . $href;
+    }
 
+    $basePathParts = array_filter(explode('/', rtrim(dirname($basePath), '/')));
+    $hrefParts = array_filter(explode('/', $href));
+    
     foreach ($hrefParts as $part) {
         if ($part === '..') {
-            array_pop($pathParts);
+            array_pop($basePathParts);
         } elseif ($part !== '.' && $part !== '') {
-            $pathParts[] = $part;
+            $basePathParts[] = $part;
         }
     }
 
-    $resolvedPath = implode('/', $pathParts);
-    return $baseScheme . '://' . $baseHost . '/' . ltrim($resolvedPath, '/');
+    $resolvedPath = '/' . implode('/', $basePathParts);
+    return $baseScheme . '://' . $baseHost . $resolvedPath;
 }
 
 
