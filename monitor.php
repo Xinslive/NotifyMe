@@ -18,7 +18,7 @@ function sendEmail($subject, $message) {
     $mail->Host = 'smtp.qq.com';
     $mail->SMTPAuth = true;
     $mail->Username = 'yeuers@foxmail.com';
-    $mail->Password = 'smtp密码';
+    $mail->Password = 'phgwakhepsglcbbj';
     $mail->SMTPSecure = 'ssl';
     $mail->Port = 465;
     $mail->setFrom('yeuers@foxmail.com', '浮生纪幸');
@@ -65,7 +65,7 @@ foreach ($tasks as $task) {
         $result = checkUrl($taskUrl, $taskKeywords);
 
         if ($result['notify']) {
-            sendEmail('注意：关键词出现啦', $result['message']);
+            sendEmail('检测到关键内容', $result['message']);
         }
 
         updateTaskStatus($taskId, $currentTime, $result['notify']);
@@ -107,10 +107,16 @@ function checkUrl($url, $keywords) {
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($curl, CURLOPT_HEADER, false);
     curl_setopt($curl, CURLOPT_NOBODY, false);
-    curl_setopt($curl, CURLOPT_FRESH_CONNECT, false);  // 允许重用连接
-    curl_setopt($curl, CURLOPT_FORBID_REUSE, false);   // 禁止禁止重用连接
-    curl_setopt($curl, CURLOPT_TCP_NODELAY, true);     // 减少网络延迟
-    curl_setopt($curl, CURLOPT_HTTPHEADER, array('Cache-Control: no-cache', 'Pragma: no-cache'));
+    curl_setopt($curl, CURLOPT_FRESH_CONNECT, false);
+    curl_setopt($curl, CURLOPT_FORBID_REUSE, false);
+    curl_setopt($curl, CURLOPT_TCP_NODELAY, true);
+    curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+        'Cache-Control: no-cache',
+        'Pragma: no-cache',
+        'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+        'Accept-Language: zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
+        'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0'
+    ));
     curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
     curl_setopt($curl, CURLOPT_TIMEOUT, 30);
@@ -144,6 +150,7 @@ function checkUrl($url, $keywords) {
 
     return ['notify' => false, 'message' => "未找到包含所有关键词的链接"];
 }
+
 
 
 function checkKeywordsInLinks($html, $keywords, $baseUrl) {
@@ -229,7 +236,6 @@ function resolveUrl($href, $baseUri) {
     $resolvedPath = '/' . implode('/', $basePathParts);
     return $baseScheme . '://' . $baseHost . $resolvedPath;
 }
-
 
 function updateTaskStatus($taskId, $currentTime, $notify) {
     global $mysqli;
