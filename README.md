@@ -14,3 +14,13 @@
 
 ![225003202](https://i1.wp.com/minipix.pro/uploads/2024/08/31/225003202.webp)
 ![775672560](https://i1.wp.com/minipix.pro/uploads/2024/08/31/775672560.webp)
+
+**db_connection.php**
+```
+<?php
+$mysqli = mysqli_connect("localhost", "数据库账号", "数据库密码", "数据库名");
+if ($mysqli->connect_error) {
+    die('数据库连接失败 (' . $mysqli->connect_errno . ') ' . $mysqli->connect_error);
+}
+```
+网站首页用来提交接收通知的邮箱，后台用来管理监控任务
