@@ -17,11 +17,11 @@ function sendEmail($subject, $message) {
     $mail->isSMTP();
     $mail->Host = 'smtp.qq.com';
     $mail->SMTPAuth = true;
-    $mail->Username = 'yeuers@foxmail.com';
-    $mail->Password = 'phgwakhepsglcbbj';
+    $mail->Username = '邮箱账号';
+    $mail->Password = '邮箱密码';
     $mail->SMTPSecure = 'ssl';
     $mail->Port = 465;
-    $mail->setFrom('yeuers@foxmail.com', '浮生纪幸');
+    $mail->setFrom('邮箱账号', '发信昵称');
     $mail->isHTML(true);
     $mail->Subject = $subject;
     $mail->CharSet = 'UTF-8';
@@ -95,7 +95,6 @@ function getActiveTasks() {
     return $tasks;
 }
 
-
 function checkUrl($url, $keywords) {
     $curl = curl_init($url);
 
@@ -110,6 +109,7 @@ function checkUrl($url, $keywords) {
     curl_setopt($curl, CURLOPT_FRESH_CONNECT, false);
     curl_setopt($curl, CURLOPT_FORBID_REUSE, false);
     curl_setopt($curl, CURLOPT_TCP_NODELAY, true);
+    curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
     curl_setopt($curl, CURLOPT_HTTPHEADER, array(
         'Cache-Control: no-cache',
         'Pragma: no-cache',
@@ -131,14 +131,15 @@ function checkUrl($url, $keywords) {
     }
 
     $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+    $effectiveUrl = curl_getinfo($curl, CURLINFO_EFFECTIVE_URL);
     curl_close($curl);
 
     if ($httpCode !== 200) {
-        logError("HTTP请求失败 for URL: $url，状态码: $httpCode");
+        logError("HTTP请求失败 for URL: $effectiveUrl，状态码: $httpCode");
         return ['notify' => false, 'message' => "HTTP状态码: $httpCode"];
     }
 
-    $baseUri = parse_url($url, PHP_URL_SCHEME) . '://' . parse_url($url, PHP_URL_HOST) . parse_url($url, PHP_URL_PATH);
+    $baseUri = parse_url($effectiveUrl, PHP_URL_SCHEME) . '://' . parse_url($effectiveUrl, PHP_URL_HOST) . parse_url($effectiveUrl, PHP_URL_PATH);
     $linkData = checkKeywordsInLinks($response, $keywords, $baseUri);
 
     if ($linkData) {
@@ -150,8 +151,6 @@ function checkUrl($url, $keywords) {
 
     return ['notify' => false, 'message' => "未找到包含所有关键词的链接"];
 }
-
-
 
 function checkKeywordsInLinks($html, $keywords, $baseUrl) {
     $dom = new DOMDocument();
