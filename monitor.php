@@ -48,7 +48,6 @@ function sendEmail($subject, $message) {
     }
 }
 
-
 $tasks = getActiveTasks();
 
 foreach ($tasks as $task) {
