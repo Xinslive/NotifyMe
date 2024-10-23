@@ -12,9 +12,6 @@
 
 由于项目过于简单，也没必要弄一个安装脚本，自己把 1.sql 导入到网站数据库就可以了
 
-![225003202](https://i1.wp.com/minipix.pro/uploads/2024/08/31/225003202.webp)
-![775672560](https://i1.wp.com/minipix.pro/uploads/2024/08/31/775672560.webp)
-
 **db_connection.php**
 ```
 <?php
