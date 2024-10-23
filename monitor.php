@@ -17,11 +17,11 @@ function sendEmail($subject, $message) {
     $mail->isSMTP();
     $mail->Host = 'smtp.qq.com';
     $mail->SMTPAuth = true;
-    $mail->Username = '邮箱账号';
-    $mail->Password = '邮箱密码';
+    $mail->Username = 'yeuers@foxmail.com';
+    $mail->Password = 'cdtbjgqpqqrjcabi';
     $mail->SMTPSecure = 'ssl';
     $mail->Port = 465;
-    $mail->setFrom('邮箱账号', '发信昵称');
+    $mail->setFrom('yeuers@foxmail.com', '浮生纪幸');
     $mail->isHTML(true);
     $mail->Subject = $subject;
     $mail->CharSet = 'UTF-8';
@@ -50,27 +50,6 @@ function sendEmail($subject, $message) {
 
 $tasks = getActiveTasks();
 
-foreach ($tasks as $task) {
-    $taskId = $task['id'];
-    $taskUrl = $task['url'];
-    $taskKeywords = array_filter(array_map('trim', explode(' ', $task['content_keywords'])));
-    $taskFrequency = $task['frequency'];
-    $lastRunTime = $task['last_run_time'];
-    $currentTime = time();
-
-    $timeDifference = $currentTime - $lastRunTime;
-
-    if ($timeDifference >= $taskFrequency) {
-        $result = checkUrl($taskUrl, $taskKeywords);
-
-        if ($result['notify']) {
-            sendEmail('检测到关键内容', $result['message']);
-        }
-
-        updateTaskStatus($taskId, $currentTime, $result['notify']);
-    }
-}
-
 function getActiveTasks() {
     global $mysqli;
     $tasks = [];
@@ -94,6 +73,27 @@ function getActiveTasks() {
     return $tasks;
 }
 
+foreach ($tasks as $task) {
+    $taskId = $task['id'];
+    $taskUrl = $task['url'];
+    $taskKeywords = array_filter(array_map('trim', explode(' ', $task['content_keywords'])));
+    $taskFrequency = $task['frequency'];
+    $lastRunTime = $task['last_run_time'];
+    $currentTime = time();
+
+    $timeDifference = $currentTime - $lastRunTime;
+
+    if ($timeDifference >= $taskFrequency) {
+        $result = checkUrl($taskUrl, $taskKeywords);
+
+        if ($result['notify']) {
+            sendEmail('检测到关键内容', $result['message']);
+        }
+
+        updateTaskStatus($taskId, $currentTime, $result['notify']);
+    }
+}
+
 function checkUrl($url, $keywords) {
     $curl = curl_init($url);
 
@@ -105,13 +105,14 @@ function checkUrl($url, $keywords) {
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($curl, CURLOPT_HEADER, false);
     curl_setopt($curl, CURLOPT_NOBODY, false);
-    curl_setopt($curl, CURLOPT_FRESH_CONNECT, false);
+    curl_setopt($curl, CURLOPT_FRESH_CONNECT, true);
     curl_setopt($curl, CURLOPT_FORBID_REUSE, false);
     curl_setopt($curl, CURLOPT_TCP_NODELAY, true);
     curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
     curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-        'Cache-Control: no-cache',
+        'Cache-Control: no-cache, no-store, must-revalidate',
         'Pragma: no-cache',
+        'Expires: 0',
         'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
         'Accept-Language: zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
         'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0'
