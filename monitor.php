@@ -15,13 +15,16 @@ require 'other/SMTP/SMTP.php';
 function sendEmail($subject, $message) {
     $mail = new PHPMailer\PHPMailer\PHPMailer();
     $mail->isSMTP();
-    $mail->Host = 'smtp.qq.com';
+    $mail->Host = getenv('SMTP_HOST') ?: 'smtp.qq.com';
     $mail->SMTPAuth = true;
-    $mail->Username = 'yeuers@foxmail.com';
-    $mail->Password = 'cdtbjgqpqqrjcabi';
-    $mail->SMTPSecure = 'ssl';
-    $mail->Port = 465;
-    $mail->setFrom('yeuers@foxmail.com', '浮生纪幸');
+    $mail->Username = getenv('SMTP_USER') ?: '';
+    $mail->Password = getenv('SMTP_PASSWORD') ?: '';
+    $mail->SMTPSecure = getenv('SMTP_SECURE') ?: 'ssl';
+    $mail->Port = getenv('SMTP_PORT') ?: 465;
+    $mail->setFrom(
+        getenv('SMTP_FROM') ?: '',
+        getenv('SMTP_FROM_NAME') ?: 'NotifyMe'
+    );
     $mail->isHTML(true);
     $mail->Subject = $subject;
     $mail->CharSet = 'UTF-8';

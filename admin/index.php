@@ -1,3 +1,17 @@
+<?php
+// HTTP Basic Auth
+$adminUser = getenv('ADMIN_USER') ?: 'admin';
+$adminPass = getenv('ADMIN_PASSWORD') ?: '';
+
+if (!isset($_SERVER['PHP_AUTH_USER']) ||
+    $_SERVER['PHP_AUTH_USER'] !== $adminUser ||
+    $_SERVER['PHP_AUTH_PW'] !== $adminPass) {
+    header('WWW-Authenticate: Basic realm="Admin Area"');
+    header('HTTP/1.0 401 Unauthorized');
+    echo '认证失败';
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -180,7 +194,7 @@
 <body>
     <div class="container">
         <h1>监控任务设置</h1>
-        
+
         <form action="add_task.php" method="POST" onsubmit="convertFrequency()">
             <input type="hidden" name="id" id="id" value="">
             <input type="hidden" name="frequency_sec" id="frequency_sec" value="">
@@ -209,15 +223,18 @@
                 include '../other/db_connection.php';
                 $result = $mysqli->query("SELECT * FROM tasks");
                 while ($row = $result->fetch_assoc()) {
+                    $safeUrl = htmlspecialchars($row['url'], ENT_QUOTES, 'UTF-8');
+                    $safeKeywords = htmlspecialchars($row['content_keywords'], ENT_QUOTES, 'UTF-8');
+                    $safeId = htmlspecialchars($row['id'], ENT_QUOTES, 'UTF-8');
                     echo "<tr>";
-                    echo "<td class='left-align'>" . $row['url'] . "</td>";
-                    echo "<td>" . $row['content_keywords'] . "</td>";
+                    echo "<td class='left-align'>" . $safeUrl . "</td>";
+                    echo "<td>" . $safeKeywords . "</td>";
                     echo "<td>" . ($row['frequency'] / 60) . "</td>";
                     echo "<td class='status'>" . ($row['status'] == 0 ? '监控中' : '已完成') . "</td>";
                     echo "<td>";
                     echo "<a href='#' onclick='populateForm(" . json_encode($row) . ");' style='color: #007bff;'>编辑</a>";
                     echo "  ";
-                    echo "<a href='#' onclick='confirmDelete(\"delete_task.php?id=" . $row['id'] . "\")' style='color: #dc3545;'>删除</a>";
+                    echo "<a href='#' onclick='confirmDelete(\"delete_task.php?id=" . $safeId . "\")' style='color: #dc3545;'>删除</a>";
                     echo "</td>";
                     echo "</tr>";
                 }

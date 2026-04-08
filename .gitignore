@@ -1,0 +1,19 @@
+# Environment
+.env
+.env.local
+.env.production
+
+# Lock files
+*.lock
+.lock
+
+# System
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# IDE
+.idea/
+.vscode/

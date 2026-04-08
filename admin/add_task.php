@@ -1,4 +1,18 @@
 <?php
+// HTTP Basic Auth
+$adminUser = getenv('ADMIN_USER') ?: 'admin';
+$adminPass = getenv('ADMIN_PASSWORD') ?: '';
+
+if (!isset($_SERVER['PHP_AUTH_USER']) ||
+    $_SERVER['PHP_AUTH_USER'] !== $adminUser ||
+    $_SERVER['PHP_AUTH_PW'] !== $adminPass) {
+    header('WWW-Authenticate: Basic realm="Admin Area"');
+    header('HTTP/1.0 401 Unauthorized');
+    echo '认证失败';
+    exit;
+}
+?>
+<?php
 include '../other/db_connection.php';
 
 $id = $_POST['id'] ?? null;
@@ -20,4 +34,3 @@ $mysqli->close();
 
 header("Location: index.php");
 ?>
-
